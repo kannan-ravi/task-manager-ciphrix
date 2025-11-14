@@ -29,7 +29,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 const Header = () => {
   return (
     <AppBar
-      position="sticky"
+      position="fixed"
       enableColorOnDark
       sx={{
         boxShadow: 0,
