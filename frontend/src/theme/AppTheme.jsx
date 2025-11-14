@@ -2,7 +2,7 @@ import * as React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import { colorSchemes, typography, shadows, shape } from "./themePrimitives";
-import { inputCustomizations } from "./customizations/input/InputCustomizations";
+import { inputCustomizations } from "./customizations/input/inputCustomizations";
 import { cardCustomization } from "./customizations/card/cardCustomization";
 
 export default function AppTheme(props) {
