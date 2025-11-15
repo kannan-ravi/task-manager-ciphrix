@@ -8,7 +8,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import ThemeSwitcher from "../ui/ThemeSwitcher";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
