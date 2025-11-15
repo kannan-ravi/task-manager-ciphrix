@@ -5,6 +5,7 @@ import { colorSchemes, typography, shadows, shape } from "./themePrimitives";
 import { inputCustomizations } from "./customizations/input/inputCustomizations";
 import { cardCustomization } from "./customizations/card/cardCustomization";
 import { dataGridCustomizations } from "./customizations/table/dataGridCustomizations";
+import { formInputCustomizations } from "./customizations/input/formInputCustomizations";
 
 export default function AppTheme(props) {
   const { children, disableCustomTheme } = props;
@@ -22,8 +23,9 @@ export default function AppTheme(props) {
           shape,
           components: {
             ...inputCustomizations,
+            ...formInputCustomizations,
             ...cardCustomization,
-            ...dataGridCustomizations
+            ...dataGridCustomizations,
           },
         });
   }, [disableCustomTheme]);
