@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { colorSchemes, typography, shadows, shape } from "./themePrimitives";
 import { inputCustomizations } from "./customizations/input/inputCustomizations";
 import { cardCustomization } from "./customizations/card/cardCustomization";
+import { dataGridCustomizations } from "./customizations/table/dataGridCustomizations";
 
 export default function AppTheme(props) {
   const { children, disableCustomTheme } = props;
@@ -22,6 +23,7 @@ export default function AppTheme(props) {
           components: {
             ...inputCustomizations,
             ...cardCustomization,
+            ...dataGridCustomizations
           },
         });
   }, [disableCustomTheme]);
