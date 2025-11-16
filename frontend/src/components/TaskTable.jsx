@@ -1,96 +1,135 @@
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import React from "react";
-
-const columns = [
-  { field: "id", headerName: "S.No" },
-  { field: "title", headerName: "Title" },
-  { field: "description", headerName: "Description" },
-  { field: "status", headerName: "Status" },
-  { field: "createdAt", headerName: "Created Date", width: 130 },
-];
-
-const rows = [
-  {
-    id: 1,
-    title: "Snow",
-    description: "Jon",
-    status: 35,
-    createdAt: "20-10-2024",
-  },
-  {
-    id: 2,
-    title: "Lannister",
-    description: "Cersei",
-    status: 42,
-    createdAt: "20-10-2024",
-  },
-  {
-    id: 3,
-    title: "Lannister",
-    description: "Jaime",
-    status: 45,
-    createdAt: "20-10-2024",
-  },
-  {
-    id: 4,
-    title: "Stark",
-    description: "Arya",
-    status: 16,
-    createdAt: "20-10-2024",
-  },
-  {
-    id: 5,
-    title: "Targaryen",
-    description: "Daenerys",
-    status: 25,
-    createdAt: "20-10-2024",
-  },
-  {
-    id: 6,
-    title: "Melisandre",
-    description: null,
-    status: 150,
-    createdAt: "20-10-2024",
-  },
-  {
-    id: 7,
-    title: "Clifford",
-    description: "Ferrara",
-    status: 44,
-    createdAt: "20-10-2024",
-  },
-  {
-    id: 8,
-    title: "Frances",
-    description: "Rossini",
-    status: 36,
-    createdAt: "20-10-2024",
-  },
-  {
-    id: 9,
-    title: "Roxie",
-    description: "Harvey",
-    status: 65,
-    createdAt: "20-10-2024",
-  },
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
+import api from "../config/axios";
+import { useDispatch } from "react-redux";
+import { showToast } from "../app/features/toast/ToastSlice";
+import { Chip, IconButton, Stack, Tooltip } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router";
 
 export default function TaskTable() {
-  const loadData = React.useCallback(async () => {}, []);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [tasks, setTasks] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  const columns = [
+    {
+      field: "sno",
+      headerName: "S.No",
+      width: 90,
+      renderCell: (params) => {
+        return params.api.getRowIndexRelativeToVisibleRows(params.row._id) + 1;
+      },
+    },
+    { field: "title", headerName: "Title", flex: 1, minWidth: 150 },
+    { field: "description", headerName: "Description", flex: 2, minWidth: 250 },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 120,
+      renderCell: (params) => {
+        const status = params.value;
+
+        const chipColor = status === "completed" ? "success" : "warning";
+
+        const label = status.charAt(0).toUpperCase() + status.slice(1);
+
+        return (
+          <Chip label={label} color={chipColor} size="small" variant="filled" />
+        );
+      },
+    },
+    {
+      field: "createdAt",
+      headerName: "Created Date",
+      width: 150,
+      renderCell: (params) => new Date(params.value).toLocaleDateString(),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 120,
+      sortable: false,
+      renderCell: (params) => (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          height="100%"
+          spacing={1}
+        >
+          <Tooltip title="Edit Task">
+            <IconButton onClick={() => handleEdit(params.row._id)} size="small">
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete Task">
+            <IconButton
+              onClick={() => handleDelete(params.row._id)}
+              size="small"
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      ),
+    },
+  ];
+
+  const handleEdit = React.useCallback((id) => {
+    navigate(`/task/edit/${id}`);
+  }, []);
+  const handleDelete = React.useCallback(async (id) => {
+    try {
+      const response = await api.delete(`/tasks/${id}`);
+
+      if (response.data.success) {
+        const message = response.data.message;
+        dispatch(showToast({ message, severity: "success" }));
+
+        setTasks((currentTasks) =>
+          currentTasks.filter((task) => task._id !== id)
+        );
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message || "Could not delete task";
+      dispatch(showToast({ message, severity: "error" }));
+    }
+  }, []);
+
+  const fetchData = React.useCallback(async () => {
+    try {
+      const response = await api.get("/tasks");
+      if (response.data.success) {
+        setTasks(response.data.data);
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message || "Something went wrong";
+      dispatch(showToast({ message, severity: "error" }));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   React.useEffect(() => {
-    loadData();
-  }, [loadData]);
+    fetchData();
+  }, [fetchData]);
   return (
     <Paper sx={{ width: "100%" }}>
       <DataGrid
-        rows={rows}
+        rows={tasks}
         columns={columns}
-        pagination
-        paginationModel={paginationModel}
+        loading={loading}
+        getRowId={(row) => row._id}
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 5 },
+          },
+        }}
         pageSizeOptions={[5, 10, 25]}
         disableRowSelectionOnClick
         sx={{

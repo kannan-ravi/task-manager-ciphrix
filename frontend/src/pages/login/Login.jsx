@@ -1,11 +1,8 @@
 import {
   Box,
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   FormLabel,
-  Link,
   Stack,
   styled,
   TextField,
@@ -14,6 +11,11 @@ import {
 import MuiCard from "@mui/material/Card";
 import React from "react";
 import AuthCardLayout from "../../components/layout/AuthCardLayout";
+import { Link, useNavigate } from "react-router";
+import api from "../../config/axios";
+import { useDispatch } from "react-redux";
+import { showToast } from "../../app/features/toast/ToastSlice";
+import { addUser } from "../../app/features/user/userSlice";
 
 const SignUpContainer = styled(Stack)(({ theme }) => ({
   height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
@@ -61,17 +63,24 @@ const Login = () => {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState("");
+
+  const [form, setForm] = React.useState({
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const validateInputs = () => {
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const name = document.getElementById("name");
+    const { email, password } = form;
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email address.");
       isValid = false;
@@ -80,7 +89,7 @@ const Login = () => {
       setEmailErrorMessage("");
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 6 characters long.");
       isValid = false;
@@ -89,30 +98,35 @@ const Login = () => {
       setPasswordErrorMessage("");
     }
 
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage("Name is required.");
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage("");
-    }
-
     return isValid;
   };
 
-  const handleSubmit = (event) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const isFormValid = validateInputs();
+    if (!isFormValid) {
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get("name"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    try {
+      const response = await api.post("auth/login", form);
+
+      if (response.data.success) {
+        dispatch(
+          showToast({
+            message: "Login successful!",
+            severity: "success",
+          })
+        );
+
+        dispatch(addUser(response.data.data));
+        navigate("/");
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message || "Something went wrong";
+      dispatch(showToast({ message, severity: "error" }));
+    }
   };
   return (
     <AuthCardLayout>
@@ -141,6 +155,8 @@ const Login = () => {
             error={emailError}
             helperText={emailErrorMessage}
             color={passwordError ? "error" : "primary"}
+            value={form.email}
+            onChange={handleChange}
           />
         </FormControl>
         <FormControl>
@@ -157,6 +173,8 @@ const Login = () => {
             error={passwordError}
             helperText={passwordErrorMessage}
             color={passwordError ? "error" : "primary"}
+            value={form.password}
+            onChange={handleChange}
           />
         </FormControl>
 
@@ -167,12 +185,12 @@ const Login = () => {
           onClick={validateInputs}
           sx={{ marginTop: "1rem" }}
         >
-          Sign up
+          Login
         </Button>
         <Typography sx={{ textAlign: "center" }}>
           Don't have an account?{" "}
           <Link
-            href="register"
+            to="/register"
             variant="body2"
             color="textPrimary"
             sx={{ alignSelf: "center" }}

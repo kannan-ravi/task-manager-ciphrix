@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import ThemeSwitcher from "./ThemeSwitcher";
+import Logout from "./Logout";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -47,8 +48,9 @@ const Header = () => {
             spacing={1}
             sx={{ marginLeft: "auto" }}
           >
-            <Stack direction="row" alignItems="center">
+            <Stack direction="row" alignItems="center" spacing={2}>
               <ThemeSwitcher />
+              <Logout />
             </Stack>
           </Stack>
         </StyledToolbar>

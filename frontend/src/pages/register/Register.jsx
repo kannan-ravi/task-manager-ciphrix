@@ -3,13 +3,16 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Link,
   TextField,
   Typography,
 } from "@mui/material";
 
 import React from "react";
+import { Link, useNavigate } from "react-router";
 import AuthCardLayout from "../../components/layout/AuthCardLayout";
+import api from "../../config/axios";
+import { showToast } from "../../app/features/toast/ToastSlice";
+import { useDispatch } from "react-redux";
 
 const Register = () => {
   const [emailError, setEmailError] = React.useState(false);
@@ -19,14 +22,23 @@ const Register = () => {
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState("");
 
+  const [form, setForm] = React.useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
   const validateInputs = () => {
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const name = document.getElementById("name");
+    const { name, password, email } = form;
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email address.");
       isValid = false;
@@ -35,7 +47,7 @@ const Register = () => {
       setEmailErrorMessage("");
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 6 characters long.");
       isValid = false;
@@ -44,7 +56,7 @@ const Register = () => {
       setPasswordErrorMessage("");
     }
 
-    if (!name.value || name.value.length < 1) {
+    if (!name || name.length < 1) {
       setNameError(true);
       setNameErrorMessage("Name is required.");
       isValid = false;
@@ -56,19 +68,31 @@ const Register = () => {
     return isValid;
   };
 
-  const handleSubmit = (event) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const isFormValid = validateInputs();
+    if (!isFormValid) {
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get("name"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    try {
+      const response = await api.post("auth/register", form);
+
+      if (response.data.success) {
+        dispatch(
+          showToast({
+            message: "Registration successful!",
+            severity: "success",
+          })
+        );
+
+        navigate("/login");
+      }
+    } catch (error) {
+      dispatch(showToast({ message, severity: "error" }));
+    }
   };
+
   return (
     <AuthCardLayout>
       <Typography
@@ -95,6 +119,8 @@ const Register = () => {
             error={nameError}
             helperText={nameErrorMessage}
             color={nameError ? "error" : "primary"}
+            value={form.name}
+            onChange={handleChange}
           />
         </FormControl>
         <FormControl>
@@ -110,6 +136,8 @@ const Register = () => {
             error={emailError}
             helperText={emailErrorMessage}
             color={passwordError ? "error" : "primary"}
+            value={form.email}
+            onChange={handleChange}
           />
         </FormControl>
         <FormControl>
@@ -126,21 +154,18 @@ const Register = () => {
             error={passwordError}
             helperText={passwordErrorMessage}
             color={passwordError ? "error" : "primary"}
+            value={form.password}
+            onChange={handleChange}
           />
         </FormControl>
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          onClick={validateInputs}
-        >
+        <Button type="submit" fullWidth variant="contained">
           Sign up
         </Button>
         <Typography sx={{ textAlign: "center" }}>
           Already have an account?{" "}
           <Link
-            href="login"
+            to="/login"
             variant="body2"
             color="textPrimary"
             sx={{ alignSelf: "center" }}

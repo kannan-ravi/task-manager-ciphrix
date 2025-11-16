@@ -4,11 +4,25 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import TaskCreate from "./pages/task/TaskCreate";
 import TaskEdit from "./pages/task/TaskEdit";
+import ProtectedRoutes from "./components/layout/ProtectedRoutes";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Dashboard />,
+    element: <ProtectedRoutes />,
+    children: [
+      {
+        path: "/",
+        element: <Dashboard />,
+      },
+      {
+        path: "/task/create",
+        element: <TaskCreate />,
+      },
+      {
+        path: "/task/edit/:id",
+        element: <TaskEdit />,
+      },
+    ],
   },
   {
     path: "/login",
@@ -17,13 +31,5 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
-  },
-  {
-    path: "/task/create",
-    element: <TaskCreate />,
-  },
-  {
-    path: "/task/edit/:id",
-    element: <TaskEdit />,
   },
 ]);

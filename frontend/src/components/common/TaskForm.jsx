@@ -59,44 +59,61 @@ const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
     },
   }),
 }));
-export const TaskForm = () => {
+export const TaskForm = ({
+  task,
+  handleChange,
+  handleSubmit,
+  errors,
+  submitButtonText,
+}) => {
   return (
-    <Box component="form" onSubmit={() => {}} noValidate autoComplete="off">
+    <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: "100%" }}>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
             <TextField
-              value={""}
-              onChange={() => {}}
+              required
               name="title"
               label="Title"
-              error={""}
-              helperText={""}
+              value={task.title || ""}
+              onChange={handleChange}
+              error={!!errors?.title}
+              helperText={errors?.title || " "}
               fullWidth
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
             <FormControl error={""} fullWidth>
-              <InputLabel id="status">Status</InputLabel>
+              <InputLabel id="status-label">Status</InputLabel>
               <Select
-                value={""}
-                onChange={() => {}}
-                labelId="status"
                 name="status"
+                labelId="status-label"
                 label="Status"
-                defaultValue=""
-                fullWidth
+                value={task.status || ""}
+                onChange={handleChange}
               >
                 <MenuItem value="pending">Pending</MenuItem>
                 <MenuItem value="completed">Completed</MenuItem>
               </Select>
-              <FormHelperText> </FormHelperText>
+              {errors?.status && (
+                <FormHelperText>{errors.status}</FormHelperText>
+              )}
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12 }} sx={{ display: "flex" }}>
-            <FormControl sx={{ width: "100%" }}>
+            <FormControl error={!!errors?.description} fullWidth>
               <InputLabel id="description">Description</InputLabel>
-              <StyledTextarea aria-label="Title Description" minRows={3} />
+              <StyledTextarea
+                name="description"
+                aria-label="Description"
+                minRows={5}
+                placeholder="Enter task description..."
+                value={task.description}
+                onChange={handleChange}
+              />
+              {errors?.description && (
+                <FormHelperText>{errors.description}</FormHelperText>
+              )}
             </FormControl>
           </Grid>
         </Grid>
@@ -108,13 +125,8 @@ export const TaskForm = () => {
         justifyContent="flex-end"
         spacing={1}
       >
-        <Button
-          type="submit"
-          size="large"
-          variant="contained"
-          onClick={() => {}}
-        >
-          Submit
+        <Button type="submit" size="large" variant="contained">
+          {submitButtonText || "Submit"}
         </Button>
       </Stack>
     </Box>

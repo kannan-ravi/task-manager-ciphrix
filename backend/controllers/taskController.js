@@ -41,6 +41,35 @@ export const getTask = async (req, res, next) => {
   }
 };
 
+export const getSingleTask = async (req, res, next) => {
+  const { id: userId } = req.user;
+  const { id: taskId } = req.params;
+
+  try {
+    const task = await TaskModel.findById(taskId);
+
+    if (!task) {
+      return next(customError(404, "Task not found"));
+    }
+
+    if (userId !== task.user.toString()) {
+      return next(
+        customError(
+          409,
+          "Forbidden: You are not authorized to access this task"
+        )
+      );
+    }
+    res.status(200).json({
+      message: "Task Retrived Successfully",
+      success: true,
+      data: task,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateTask = async (req, res, next) => {
   const { id } = req.params;
   const { title, description, status } = req.body;
