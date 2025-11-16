@@ -3,7 +3,7 @@ import Paper from "@mui/material/Paper";
 import React from "react";
 import api from "../config/axios";
 import { useDispatch } from "react-redux";
-import { showToast } from "../app/features/toast/ToastSlice";
+import { showToast } from "../app/features/toast/toastSlice";
 import { Chip, IconButton, Stack, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";

@@ -11,7 +11,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router";
 import AuthCardLayout from "../../components/layout/AuthCardLayout";
 import api from "../../config/axios";
-import { showToast } from "../../app/features/toast/ToastSlice";
+import { showToast } from "../../app/features/toast/toastSlice";
 import { useDispatch } from "react-redux";
 
 const Register = () => {

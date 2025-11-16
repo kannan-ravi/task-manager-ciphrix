@@ -14,7 +14,7 @@ import AuthCardLayout from "../../components/layout/AuthCardLayout";
 import { Link, useNavigate } from "react-router";
 import api from "../../config/axios";
 import { useDispatch } from "react-redux";
-import { showToast } from "../../app/features/toast/ToastSlice";
+import { showToast } from "../../app/features/toast/toastSlice";
 import { addUser } from "../../app/features/user/userSlice";
 
 const SignUpContainer = styled(Stack)(({ theme }) => ({

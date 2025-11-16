@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { removeUser } from "../../app/features/user/userSlice";
 import api from "../../config/axios";
 import { useNavigate } from "react-router";
-import { showToast } from "../../app/features/toast/ToastSlice";
+import { showToast } from "../../app/features/toast/toastSlice";
 const Logout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

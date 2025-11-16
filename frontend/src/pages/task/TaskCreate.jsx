@@ -5,7 +5,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { TaskForm } from "../../components/common/TaskForm";
 import { useNavigate } from "react-router";
 import api from "../../config/axios";
-import { showToast } from "../../app/features/toast/ToastSlice";
+import { showToast } from "../../app/features/toast/toastSlice";
 import { useDispatch } from "react-redux";
 
 const TaskCreate = () => {
