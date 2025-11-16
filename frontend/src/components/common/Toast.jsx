@@ -1,7 +1,7 @@
 import { Alert, Snackbar } from "@mui/material";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { hideToast } from "../../app/features/toast/ToastSlice";
+import { hideToast } from "../../app/features/toast/toastSlice";
 
 const Toast = () => {
   const dispatch = useDispatch();
