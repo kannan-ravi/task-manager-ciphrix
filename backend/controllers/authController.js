@@ -56,10 +56,15 @@ export const login = async (req, res, next) => {
 
     const token = createJWTToken(isUserExist);
     res.cookie("token", token, {
-      withCredentials: true,
       httpOnly: true,
-      sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+
+      domain:
+        process.env.NODE_ENV === "production"
+          ? "task-manager-ciphrix.vercel.app"
+          : undefined,
+      path: "/",
     });
 
     const { password: _, ...user } = isUserExist._doc;
