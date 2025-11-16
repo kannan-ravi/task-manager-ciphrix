@@ -60,10 +60,7 @@ export const login = async (req, res, next) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
 
-      domain:
-        process.env.NODE_ENV === "production"
-          ? "task-manager-ciphrix.vercel.app"
-          : undefined,
+      domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
       path: "/",
     });
 
