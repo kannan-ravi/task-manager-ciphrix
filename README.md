@@ -44,16 +44,6 @@ The user interface is built with **Material-UI (MUI)**, featuring a responsive d
 
 ---
 
-## 📸 Screenshots
-
-*(This is a placeholder section. Add screenshots of your application here!)*
-
-| Login Page (Light Mode) | Dashboard (Dark Mode) | Create Task Form |
-| :---: | :---: | :---: |
-| _[Add screenshot of your login page here]_ | _[Add screenshot of your dashboard/task table in dark mode here]_ | _[Add screenshot of your create/edit task form here]_ |
-
----
-
 ## 🚀 Getting Started
 
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
